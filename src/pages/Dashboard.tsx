@@ -1,17 +1,10 @@
-import { useState } from "react";
-import { Alert } from "@/types/soar";
-import { mockAlerts, defaultPlaybook } from "@/data/mockData";
-import { AlertDetailsPanel } from "@/components/dashboard/AlertDetailsPanel";
+import { defaultPlaybook } from "@/data/mockData";
 import { ThreatDetectionPanel } from "@/components/dashboard/ThreatDetectionPanel";
 import { ThreatIntelPanel } from "@/components/dashboard/ThreatIntelPanel";
 import { SOCVisualization } from "@/components/dashboard/SOCVisualization";
 import { PlaybookVisualization } from "@/components/playbooks/PlaybookVisualization";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Radar, Globe, Workflow, Shield } from "lucide-react";
 
 export default function Dashboard() {
-  const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
-
   return (
     <div className="flex-1 space-y-6 p-6">
       {/* Header */}
@@ -28,38 +21,17 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* SOC Dashboard (Module 4) – always visible at top */}
+      {/* SOC Dashboard – Summary Stats & Charts */}
       <SOCVisualization />
 
-      {/* Tabbed modules */}
-      <Tabs defaultValue="detection" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="detection" className="flex items-center gap-2 text-xs sm:text-sm">
-            <Radar className="h-4 w-4" />
-            Threat Detection
-          </TabsTrigger>
-          <TabsTrigger value="intel" className="flex items-center gap-2 text-xs sm:text-sm">
-            <Globe className="h-4 w-4" />
-            Threat Intelligence
-          </TabsTrigger>
-          <TabsTrigger value="response" className="flex items-center gap-2 text-xs sm:text-sm">
-            <Workflow className="h-4 w-4" />
-            Automated Response
-          </TabsTrigger>
-        </TabsList>
+      {/* Security Alerts Table */}
+      <ThreatDetectionPanel />
 
-        <TabsContent value="detection" className="space-y-4">
-          <ThreatDetectionPanel />
-        </TabsContent>
+      {/* Threat Intelligence Panel */}
+      <ThreatIntelPanel />
 
-        <TabsContent value="intel" className="space-y-4">
-          <ThreatIntelPanel />
-        </TabsContent>
-
-        <TabsContent value="response" className="space-y-4">
-          <PlaybookVisualization playbook={defaultPlaybook} />
-        </TabsContent>
-      </Tabs>
+      {/* Automated Response Playbook */}
+      <PlaybookVisualization playbook={defaultPlaybook} />
     </div>
   );
 }
