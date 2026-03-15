@@ -35,20 +35,7 @@ export default function Dashboard() {
       <ThreatIntelPanel />
 
       {/* Automated Response Playbook */}
-      <Card className="border-border">
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <Workflow className="h-5 w-5 text-primary" />
-            Automated Security Response
-          </CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Automated incident response workflow – Click "Run Playbook" to simulate execution
-          </p>
-        </CardHeader>
-        <CardContent>
-          <PlaybookVisualization playbook={defaultPlaybook} />
-        </CardContent>
-      </Card>
+      <PlaybookVisualization playbook={defaultPlaybook} />
     </div>
   );
 }
