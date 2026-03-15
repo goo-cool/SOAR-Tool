@@ -1,12 +1,8 @@
-import { useState } from "react";
-import { Alert } from "@/types/soar";
-import { mockAlerts, defaultPlaybook } from "@/data/mockData";
+import { defaultPlaybook } from "@/data/mockData";
 import { ThreatDetectionPanel } from "@/components/dashboard/ThreatDetectionPanel";
 import { ThreatIntelPanel } from "@/components/dashboard/ThreatIntelPanel";
 import { SOCVisualization } from "@/components/dashboard/SOCVisualization";
 import { PlaybookVisualization } from "@/components/playbooks/PlaybookVisualization";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Radar, Globe, Workflow, Shield, AlertTriangle, Activity } from "lucide-react";
 
 export default function Dashboard() {
   return (
