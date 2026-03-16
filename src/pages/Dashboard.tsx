@@ -1,8 +1,9 @@
 import { defaultPlaybook } from "@/data/mockData";
+import { ArchitectureDiagram } from "@/components/dashboard/ArchitectureDiagram";
+import { SOCVisualization } from "@/components/dashboard/SOCVisualization";
 import { ThreatDetectionPanel } from "@/components/dashboard/ThreatDetectionPanel";
 import { ThreatIntelPanel } from "@/components/dashboard/ThreatIntelPanel";
-import { SOCVisualization } from "@/components/dashboard/SOCVisualization";
-import { PlaybookVisualization } from "@/components/playbooks/PlaybookVisualization";
+import { AutomatedResponsePanel } from "@/components/dashboard/AutomatedResponsePanel";
 
 export default function Dashboard() {
   return (
@@ -10,9 +11,9 @@ export default function Dashboard() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">SOAR Dashboard</h1>
+          <h1 className="text-3xl font-bold tracking-tight">SOAR Tool for Automated Security Operations</h1>
           <p className="text-muted-foreground">
-            Security Orchestration, Automation & Response
+            Security Orchestration, Automation &amp; Response – SOC Dashboard
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -21,17 +22,20 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* SOC Dashboard – Summary Stats & Charts */}
+      {/* Architecture Diagram */}
+      <ArchitectureDiagram />
+
+      {/* Module 4 – SOC Dashboard Summary Stats & Charts */}
       <SOCVisualization />
 
-      {/* Security Alerts Table */}
+      {/* Module 1 – Threat Detection */}
       <ThreatDetectionPanel />
 
-      {/* Threat Intelligence Panel */}
+      {/* Module 2 – Threat Intelligence */}
       <ThreatIntelPanel />
 
-      {/* Automated Response Playbook */}
-      <PlaybookVisualization playbook={defaultPlaybook} />
+      {/* Module 3 – Automated Response */}
+      <AutomatedResponsePanel />
     </div>
   );
 }

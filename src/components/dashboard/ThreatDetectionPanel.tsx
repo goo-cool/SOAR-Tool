@@ -21,7 +21,7 @@ const statusColors: Record<string, string> = {
   blocked: 'text-warning',
 };
 
-const suspiciousIPs = ['192.168.1.100', '45.33.32.156', '203.45.67.89'];
+const suspiciousIPs = ['192.168.1.20', '192.168.1.30', '192.168.1.50'];
 
 export function ThreatDetectionPanel() {
   return (
