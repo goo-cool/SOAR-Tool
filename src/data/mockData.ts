@@ -165,16 +165,16 @@ export interface AuthLogEntry {
 }
 
 export const authLogEntries: AuthLogEntry[] = [
-  { id: 'log-1', timestamp: '2024-09-01 10:30:45', sourceIP: '192.168.1.100', eventType: 'Failed Login', severity: 'high', status: 'failed', username: 'admin', details: 'Invalid password - attempt 1/47' },
-  { id: 'log-2', timestamp: '2024-09-01 10:30:46', sourceIP: '192.168.1.100', eventType: 'Failed Login', severity: 'high', status: 'failed', username: 'admin', details: 'Invalid password - attempt 2/47' },
-  { id: 'log-3', timestamp: '2024-09-01 10:30:47', sourceIP: '192.168.1.100', eventType: 'Failed Login', severity: 'critical', status: 'failed', username: 'root', details: 'Invalid password - attempt 3/47' },
-  { id: 'log-4', timestamp: '2024-09-01 10:30:48', sourceIP: '192.168.1.100', eventType: 'Brute Force Detected', severity: 'critical', status: 'blocked', username: 'admin', details: 'Rate limit exceeded - IP flagged' },
-  { id: 'log-5', timestamp: '2024-09-01 10:31:02', sourceIP: '45.33.32.156', eventType: 'Failed SSH Login', severity: 'high', status: 'failed', username: 'root', details: 'SSH key authentication failed' },
-  { id: 'log-6', timestamp: '2024-09-01 10:31:15', sourceIP: '45.33.32.156', eventType: 'Failed SSH Login', severity: 'high', status: 'failed', username: 'admin', details: 'SSH password rejected' },
-  { id: 'log-7', timestamp: '2024-09-01 10:31:30', sourceIP: '203.45.67.89', eventType: 'Suspicious Transfer', severity: 'critical', status: 'blocked', username: 'svc_backup', details: 'Large data transfer blocked by DLP' },
-  { id: 'log-8', timestamp: '2024-09-01 10:32:00', sourceIP: '10.0.0.45', eventType: 'C2 Communication', severity: 'critical', status: 'blocked', username: 'SYSTEM', details: 'Outbound connection to known C2 server blocked' },
-  { id: 'log-9', timestamp: '2024-09-01 10:32:15', sourceIP: '172.16.0.22', eventType: 'Port Scan', severity: 'medium', status: 'blocked', username: 'unknown', details: 'Sequential port scan detected on subnet' },
-  { id: 'log-10', timestamp: '2024-09-01 10:33:00', sourceIP: '10.0.2.15', eventType: 'DNS Anomaly', severity: 'high', status: 'failed', username: 'SYSTEM', details: '4200 DNS queries with encoded payloads' },
+  { id: 'log-1', timestamp: 'Mar 16 10:30:45', sourceIP: '192.168.1.20', eventType: 'Failed SSH Login', severity: 'high', status: 'failed', username: 'root', details: 'Failed password for root from 192.168.1.20 port 4521 ssh2' },
+  { id: 'log-2', timestamp: 'Mar 16 10:30:46', sourceIP: '192.168.1.20', eventType: 'Failed SSH Login', severity: 'high', status: 'failed', username: 'admin', details: 'Failed password for admin from 192.168.1.20 port 4522 ssh2' },
+  { id: 'log-3', timestamp: 'Mar 16 10:30:47', sourceIP: '192.168.1.20', eventType: 'Failed SSH Login', severity: 'critical', status: 'failed', username: 'root', details: 'Failed password for root from 192.168.1.20 port 4523 ssh2' },
+  { id: 'log-4', timestamp: 'Mar 16 10:30:48', sourceIP: '192.168.1.20', eventType: 'Brute Force Detected', severity: 'critical', status: 'blocked', username: 'root', details: '🚨 ALERT: 192.168.1.20 failed 47 times (Threshold = 3)' },
+  { id: 'log-5', timestamp: 'Mar 16 10:30:50', sourceIP: '192.168.1.30', eventType: 'Failed SSH Login', severity: 'high', status: 'failed', username: 'ubuntu', details: 'Failed password for ubuntu from 192.168.1.30 port 5012 ssh2' },
+  { id: 'log-6', timestamp: 'Mar 16 10:31:02', sourceIP: '192.168.1.30', eventType: 'Failed SSH Login', severity: 'high', status: 'failed', username: 'test', details: 'Failed password for test from 192.168.1.30 port 5013 ssh2' },
+  { id: 'log-7', timestamp: 'Mar 16 10:31:15', sourceIP: '192.168.1.40', eventType: 'Accepted Login', severity: 'info', status: 'success', username: 'admin', details: 'Accepted password for admin from 192.168.1.40 port 4100 ssh2' },
+  { id: 'log-8', timestamp: 'Mar 16 10:31:30', sourceIP: '192.168.1.50', eventType: 'Failed SSH Login', severity: 'medium', status: 'failed', username: 'root', details: 'Failed password for root from 192.168.1.50 port 5500 ssh2' },
+  { id: 'log-9', timestamp: 'Mar 16 10:32:00', sourceIP: '192.168.1.20', eventType: 'IP Blocked', severity: 'critical', status: 'blocked', username: 'SYSTEM', details: 'iptables -A INPUT -s 192.168.1.20 -j DROP' },
+  { id: 'log-10', timestamp: 'Mar 16 10:32:15', sourceIP: '192.168.1.60', eventType: 'Failed SSH Login', severity: 'medium', status: 'failed', username: 'ubuntu', details: 'Failed password for ubuntu from 192.168.1.60 port 5801 ssh2' },
 ];
 
 // Module 2: Threat intelligence data
