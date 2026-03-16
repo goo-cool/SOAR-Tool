@@ -191,12 +191,11 @@ export interface ThreatIntelEntry {
 }
 
 export const threatIntelData: ThreatIntelEntry[] = [
-  { ip: '192.168.1.100', reputationScore: 92, totalReports: 156, classification: 'malicious', source: 'VirusTotal', lastSeen: '2024-09-01', country: 'CN', isp: 'ChinaNet', categories: ['Brute Force', 'Scanner', 'Proxy'] },
-  { ip: '45.33.32.156', reputationScore: 85, totalReports: 89, classification: 'malicious', source: 'AbuseIPDB', lastSeen: '2024-09-01', country: 'US', isp: 'Linode LLC', categories: ['SSH Brute Force', 'Web Attack'] },
-  { ip: '203.45.67.89', reputationScore: 78, totalReports: 42, classification: 'suspicious', source: 'VirusTotal', lastSeen: '2024-08-30', country: 'RU', isp: 'PJSC Rostelecom', categories: ['Data Exfiltration', 'Botnet'] },
-  { ip: '10.0.0.45', reputationScore: 15, totalReports: 0, classification: 'unknown', source: 'Internal', lastSeen: '2024-09-01', country: 'Internal', isp: 'Internal Network', categories: ['Compromised Host'] },
-  { ip: '172.16.0.22', reputationScore: 35, totalReports: 3, classification: 'suspicious', source: 'AbuseIPDB', lastSeen: '2024-09-01', country: 'Internal', isp: 'Internal Network', categories: ['Scanner'] },
-  { ip: '10.0.2.15', reputationScore: 45, totalReports: 7, classification: 'suspicious', source: 'Internal', lastSeen: '2024-09-01', country: 'Internal', isp: 'Internal Network', categories: ['DNS Tunneling'] },
+  { ip: '192.168.1.20', reputationScore: 92, totalReports: 156, classification: 'malicious', source: 'AbuseIPDB', lastSeen: '2024-09-01', country: 'LAN', isp: 'Local Network', categories: ['SSH Brute Force', 'Scanner'] },
+  { ip: '192.168.1.30', reputationScore: 68, totalReports: 42, classification: 'suspicious', source: 'VirusTotal', lastSeen: '2024-09-01', country: 'LAN', isp: 'Local Network', categories: ['SSH Brute Force'] },
+  { ip: '192.168.1.40', reputationScore: 5, totalReports: 0, classification: 'clean', source: 'AbuseIPDB', lastSeen: '2024-09-01', country: 'LAN', isp: 'Local Network', categories: [] },
+  { ip: '192.168.1.50', reputationScore: 45, totalReports: 7, classification: 'suspicious', source: 'VirusTotal', lastSeen: '2024-09-01', country: 'LAN', isp: 'Local Network', categories: ['Scanner'] },
+  { ip: '192.168.1.60', reputationScore: 30, totalReports: 3, classification: 'unknown', source: 'Internal', lastSeen: '2024-09-01', country: 'LAN', isp: 'Local Network', categories: ['SSH Attempt'] },
 ];
 
 // Incident timeline data
