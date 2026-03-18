@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SOAR — Automated Security Operations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<!-- Scanline overlay -->
+<div class="scanlines"></div>
+<!-- Background pulse -->
+<canvas id="bg-canvas"></canvas>
+
+<div class="shell">
+
+  <!-- ══════════════ SIDEBAR ══════════════ -->
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 36 36" width="28" height="28">
+          <polygon points="18,2 34,10 34,26 18,34 2,26 2,10" fill="none" stroke="currentColor" stroke-width="2"/>
+          <polygon points="18,8 28,13 28,23 18,28 8,23 8,13" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.5"/>
+          <circle cx="18" cy="18" r="4" fill="currentColor"/>
+        </svg>
+      </div>
+      <div class="logo-text">
+        <span class="logo-main">SOAR</span>
+        <span class="logo-sub">Security Ops Center</span>
+      </div>
+    </div>
+
+    <div class="sys-status">
+      <div class="sys-row"><span class="dot green"></span><span>Threat Detection</span><span class="sys-val active">ACTIVE</span></div>
+      <div class="sys-row"><span class="dot cyan"></span><span>Threat Intel</span><span class="sys-val active">ACTIVE</span></div>
+      <div class="sys-row"><span class="dot amber"></span><span>Auto Response</span><span class="sys-val active">ACTIVE</span></div>
+      <div class="sys-row"><span class="dot blue"></span><span>SIEM Ingestion</span><span class="sys-val active">ACTIVE</span></div>
+    </div>
+
+    <nav class="nav">
+      <button class="nav-btn active" data-tab="overview">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Overview
+      </button>
+      <button class="nav-btn" data-tab="detection">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Detection
+      </button>
+      <button class="nav-btn" data-tab="intelligence">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Intelligence
+      </button>
+      <button class="nav-btn" data-tab="response">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Response
+      </button>
+      <button class="nav-btn" data-tab="timeline">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><path d="M4.93 4.93l2.83 2.83"/><path d="M16.24 16.24l2.83 2.83"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><path d="M4.93 19.07l2.83-2.83"/><path d="M16.24 7.76l2.83-2.83"/></svg>
+        Timeline
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="clock" id="clock">--:--:--</div>
+      <div class="analyst">
+        <div class="analyst-dot"></div>
+        <span>Analyst Online</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ══════════════ MAIN ══════════════ -->
+  <main class="main">
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="topbar-l">
+        <h1 class="page-title" id="page-title">Security Operations Overview</h1>
+        <div class="page-sub">Automated threat detection, enrichment, and response pipeline</div>
+      </div>
+      <div class="topbar-r">
+        <div class="pipeline-badge" id="pipeline-status">
+          <span class="pip-dot"></span>
+          Pipeline Idle
+        </div>
+        <button class="run-pipeline-btn" id="run-pipeline-btn" onclick="runFullPipeline()">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Run Full Pipeline
+        </button>
+      </div>
+    </div>
+
+    <!-- ══ TAB: OVERVIEW ══ -->
+    <div class="tab-content active" id="tab-overview">
+
+      <!-- Summary Cards -->
+      <div class="cards-row" id="cards-row">
+        <div class="card" id="card-logs">
+          <div class="card-icon logs">📄</div>
+          <div class="card-body">
+            <div class="card-val" id="c-logs">—</div>
+            <div class="card-label">Log Entries</div>
+          </div>
+          <div class="card-bar" style="--c: var(--cyan)"></div>
+        </div>
+        <div class="card" id="card-failed">
+          <div class="card-icon failed">⚠️</div>
+          <div class="card-body">
+            <div class="card-val" id="c-failed">—</div>
+            <div class="card-label">Failed Logins</div>
+          </div>
+          <div class="card-bar" style="--c: var(--amber)"></div>
+        </div>
+        <div class="card" id="card-alerts">
+          <div class="card-icon alerts">🚨</div>
+          <div class="card-body">
+            <div class="card-val" id="c-alerts">—</div>
+            <div class="card-label">Alerts Generated</div>
+          </div>
+          <div class="card-bar" style="--c: var(--red)"></div>
+        </div>
+        <div class="card" id="card-blocked">
+          <div class="card-icon blocked">🚫</div>
+          <div class="card-body">
+            <div class="card-val" id="c-blocked">—</div>
+            <div class="card-label">IPs Auto-Blocked</div>
+          </div>
+          <div class="card-bar" style="--c: var(--green)"></div>
+        </div>
+      </div>
+
+      <!-- Chart + Log Feed -->
+      <div class="two-col">
+        <div class="panel">
+          <div class="panel-hdr">
+            <span class="panel-title">Failed Login Attempts by IP</span>
+            <span class="panel-badge">Module 1</span>
+          </div>
+          <div class="chart-wrap"><canvas id="barChart"></canvas></div>
+        </div>
+        <div class="panel">
+          <div class="panel-hdr">
+            <span class="panel-title">Live Auth Log Feed</span>
+            <span class="panel-badge">Raw Logs</span>
+          </div>
+          <div class="log-feed" id="log-feed">
+            <div class="log-placeholder">Run pipeline to see logs…</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alerts Table -->
+      <div class="panel">
+        <div class="panel-hdr">
+          <span class="panel-title">Detected Security Alerts</span>
+          <span class="panel-badge">Module 1 + 2</span>
+        </div>
+        <div class="tbl-wrap">
+          <table class="tbl" id="alerts-tbl">
+            <thead>
+              <tr>
+                <th>Alert ID</th><th>Source IP</th><th>Attempts</th>
+                <th>Severity</th><th>Intel Score</th><th>Classification</th>
+                <th>Status</th><th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="alerts-tbody">
+              <tr><td colspan="8" class="tbl-empty">Run pipeline to detect threats…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ TAB: DETECTION ══ -->
+    <div class="tab-content" id="tab-detection">
+      <div class="module-header">
+        <div class="module-num">01</div>
+        <div>
+          <h2 class="module-title">Threat Detection Engine</h2>
+          <p class="module-desc">SSH authentication log monitoring with brute-force pattern recognition</p>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="panel">
+          <div class="panel-hdr"><span class="panel-title">Detection Configuration</span></div>
+          <div class="config-grid">
+            <div class="config-item"><span class="cfg-label">Log Source</span><span class="cfg-val mono">/var/log/auth.log</span></div>
+            <div class="config-item"><span class="cfg-label">Detection Rule</span><span class="cfg-val mono">failed_logins > 10</span></div>
+            <div class="config-item"><span class="cfg-label">Window</span><span class="cfg-val mono">30 minutes</span></div>
+            <div class="config-item"><span class="cfg-label">Protocol</span><span class="cfg-val mono">SSH / TCP:22</span></div>
+            <div class="config-item"><span class="cfg-label">Severity Logic</span><span class="cfg-val mono">count > 25 → Critical</span></div>
+            <div class="config-item"><span class="cfg-label">Auto-Escalate</span><span class="cfg-val green-val">Enabled</span></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-hdr"><span class="panel-title">Detection Statistics</span></div>
+          <div class="stats-grid" id="det-stats">
+            <div class="stat-item"><div class="stat-n" id="det-total">—</div><div class="stat-l">Total Logs</div></div>
+            <div class="stat-item"><div class="stat-n red" id="det-failed">—</div><div class="stat-l">Failed Logins</div></div>
+            <div class="stat-item"><div class="stat-n amber" id="det-alerts">—</div><div class="stat-l">Alerts Fired</div></div>
+            <div class="stat-item"><div class="stat-n green" id="det-accepted">—</div><div class="stat-l">Accepted Logins</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-hdr"><span class="panel-title">Sample Log Entries (auth.log)</span></div>
+        <div class="log-terminal" id="det-logs">
+          <div class="term-placeholder">⌛ Awaiting detection run…</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ TAB: INTELLIGENCE ══ -->
+    <div class="tab-content" id="tab-intelligence">
+      <div class="module-header">
+        <div class="module-num">02</div>
+        <div>
+          <h2 class="module-title">Threat Intelligence Enrichment</h2>
+          <p class="module-desc">Automated IP reputation lookup via AbuseIPDB and VirusTotal simulation</p>
+        </div>
+      </div>
+      <div class="intel-grid" id="intel-cards">
+        <div class="intel-placeholder">Run pipeline to enrich IPs…</div>
+      </div>
+    </div>
+
+    <!-- ══ TAB: RESPONSE ══ -->
+    <div class="tab-content" id="tab-response">
+      <div class="module-header">
+        <div class="module-num">03</div>
+        <div>
+          <h2 class="module-title">Automated Response Playbook</h2>
+          <p class="module-desc">Orchestrated incident response execution with MITRE ATT&CK mapping</p>
+        </div>
+      </div>
+
+      <!-- Playbook flow diagram (static) -->
+      <div class="panel">
+        <div class="panel-hdr"><span class="panel-title">Playbook Flow — SSH Brute Force Response v2.1</span></div>
+        <div class="playbook-flow">
+          <div class="pb-node trigger"><div class="pb-icon">⚡</div><div class="pb-lbl">TRIGGER</div><div class="pb-sub">Alert Received</div></div>
+          <div class="pb-conn"><div class="pb-line"><div class="pb-anim"></div></div><div class="pb-arr">▶</div></div>
+          <div class="pb-node" id="pb-1"><div class="pb-icon">🔎</div><div class="pb-lbl">VALIDATE</div><div class="pb-sub">Confirm Alert</div></div>
+          <div class="pb-conn"><div class="pb-line"><div class="pb-anim"></div></div><div class="pb-arr">▶</div></div>
+          <div class="pb-node" id="pb-2"><div class="pb-icon">🌐</div><div class="pb-lbl">ENRICH</div><div class="pb-sub">Threat Intel</div></div>
+          <div class="pb-conn"><div class="pb-line"><div class="pb-anim"></div></div><div class="pb-arr">▶</div></div>
+          <div class="pb-node" id="pb-3"><div class="pb-icon">📣</div><div class="pb-lbl">NOTIFY</div><div class="pb-sub">SOC Analyst</div></div>
+          <div class="pb-conn"><div class="pb-line"><div class="pb-anim"></div></div><div class="pb-arr">▶</div></div>
+          <div class="pb-node" id="pb-4"><div class="pb-icon">🚫</div><div class="pb-lbl">BLOCK</div><div class="pb-sub">Firewall Rule</div></div>
+          <div class="pb-conn"><div class="pb-line"><div class="pb-anim"></div></div><div class="pb-arr">▶</div></div>
+          <div class="pb-node" id="pb-5"><div class="pb-icon">🔒</div><div class="pb-lbl">ISOLATE</div><div class="pb-sub">Affected Host</div></div>
+          <div class="pb-conn"><div class="pb-line"><div class="pb-anim"></div></div><div class="pb-arr">▶</div></div>
+          <div class="pb-node" id="pb-6"><div class="pb-icon">📋</div><div class="pb-lbl">LOG SIEM</div><div class="pb-sub">Incident Record</div></div>
+          <div class="pb-conn"><div class="pb-line"><div class="pb-anim"></div></div><div class="pb-arr">▶</div></div>
+          <div class="pb-node" id="pb-7"><div class="pb-icon">✅</div><div class="pb-lbl">CLOSE</div><div class="pb-sub">Tag & Archive</div></div>
+        </div>
+      </div>
+
+      <!-- Playbook execution results -->
+      <div class="panel">
+        <div class="panel-hdr">
+          <span class="panel-title">Execution Results</span>
+          <span class="panel-badge" id="pb-count">0 playbooks run</span>
+        </div>
+        <div id="playbook-results">
+          <div class="tbl-empty" style="padding:32px;text-align:center">Run pipeline to execute playbooks…</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ TAB: TIMELINE ══ -->
+    <div class="tab-content" id="tab-timeline">
+      <div class="module-header">
+        <div class="module-num">04</div>
+        <div>
+          <h2 class="module-title">Incident Timeline</h2>
+          <p class="module-desc">Chronological view of all security events in the current session</p>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="panel">
+          <div class="panel-hdr"><span class="panel-title">Event Timeline</span></div>
+          <div class="timeline" id="timeline-body">
+            <div class="tl-empty">Run pipeline to generate timeline…</div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-hdr"><span class="panel-title">Attack Distribution</span></div>
+          <div class="chart-wrap"><canvas id="radarChart"></canvas></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-hdr"><span class="panel-title">MITRE ATT&CK Coverage</span></div>
+        <div class="mitre-grid">
+          <div class="mitre-card active-t"><div class="mitre-id">TA0006</div><div class="mitre-name">Credential Access</div><div class="mitre-dot"></div></div>
+          <div class="mitre-card active-t"><div class="mitre-id">T1110</div><div class="mitre-name">Brute Force</div><div class="mitre-dot"></div></div>
+          <div class="mitre-card active-t"><div class="mitre-id">T1110.001</div><div class="mitre-name">Password Guessing</div><div class="mitre-dot"></div></div>
+          <div class="mitre-card"><div class="mitre-id">T1021.004</div><div class="mitre-name">Remote Services: SSH</div><div class="mitre-dot"></div></div>
+          <div class="mitre-card"><div class="mitre-id">TA0001</div><div class="mitre-name">Initial Access</div><div class="mitre-dot"></div></div>
+          <div class="mitre-card"><div class="mitre-id">T1078</div><div class="mitre-name">Valid Accounts</div><div class="mitre-dot"></div></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Modal -->
+<div class="modal-bg" id="modal-bg" onclick="closeModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-hdr">
+      <span id="modal-title">Playbook Execution</span>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

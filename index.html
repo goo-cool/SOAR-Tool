@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SOAR Tool – Security Operations Center</title>
+    <meta name="description"
+        content="SOAR Tool for Automated Security Operations – SOC Dashboard with 6 real-world playbooks." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+</head>
+
+<body>
+
+    <!-- ═══════════════════ SIDEBAR ═══════════════════ -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-icon">
+                <svg width="22" height="22" viewBox="0 0 34 34" fill="none">
+                    <circle cx="17" cy="17" r="16" stroke="url(#sg1)" stroke-width="2" />
+                    <polygon points="17,5 27,11 27,23 17,29 7,23 7,11" fill="url(#sg2)" opacity="0.2" />
+                    <polygon points="17,5 27,11 27,23 17,29 7,23 7,11" stroke="url(#sg1)" stroke-width="1.5"
+                        fill="none" />
+                    <circle cx="17" cy="17" r="4" fill="url(#sg1)" />
+                    <defs>
+                        <linearGradient id="sg1" x1="0" y1="0" x2="34" y2="34">
+                            <stop stop-color="#4f8ef7" />
+                            <stop offset="1" stop-color="#00d4ff" />
+                        </linearGradient>
+                        <linearGradient id="sg2" x1="0" y1="0" x2="34" y2="34">
+                            <stop stop-color="#4f8ef7" />
+                            <stop offset="1" stop-color="#00d4ff" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </div>
+            <div class="logo-text">
+                <div class="logo-name">SOAR Tool</div>
+                <div class="logo-sub">Security Operations</div>
+            </div>
+        </div>
+
+        <div class="sidebar-divider"></div>
+        <div class="sidebar-section-label">NAVIGATION</div>
+
+        <nav class="sidebar-nav">
+            <button class="nav-item active" id="nav-dashboard" onclick="showPage('dashboard', this)">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7" rx="1" />
+                    <rect x="14" y="3" width="7" height="7" rx="1" />
+                    <rect x="3" y="14" width="7" height="7" rx="1" />
+                    <rect x="14" y="14" width="7" height="7" rx="1" />
+                </svg>
+                Dashboard
+            </button>
+            <button class="nav-item" id="nav-alerts" onclick="showPage('alerts', this)">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                    <line x1="12" y1="9" x2="12" y2="13" />
+                    <line x1="12" y1="17" x2="12.01" y2="17" />
+                </svg>
+                Alerts
+                <span class="nav-badge">{{ data.global_stats.total_alerts }}</span>
+            </button>
+            <button class="nav-item" id="nav-cases" onclick="showPage('cases', this)">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z" />
+                </svg>
+                Cases
+            </button>
+            <button class="nav-item" id="nav-playbooks" onclick="showPage('playbooks', this)">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="5 3 19 12 5 21 5 3" />
+                </svg>
+                Playbooks
+            </button>
+            <button class="nav-item" id="nav-settings" onclick="showPage('settings', this)">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3" />
+                    <path
+                        d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" />
+                </svg>
+                Settings
+            </button>
+        </nav>
+
+        <div class="sidebar-status">
+            <div class="status-dot-wrap"><span class="status-online-dot"></span></div>
+            <div>
+                <div class="status-title">System Status</div>
+                <div class="status-sub">All systems operational</div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ═══════════════════ MAIN CONTENT ═══════════════════ -->
+    <div class="content-area">
+
+        <!-- TOP BAR -->
+        <header class="topbar">
+            <div class="topbar-search">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+                <input type="text" id="globalSearch" placeholder="Search alerts, IPs, or threats..."
+                    oninput="filterAlerts(this.value)" />
+            </div>
+            <div class="topbar-right">
+                <div class="topbar-clock" id="clock">--:--:--</div>
+                <div class="topbar-badge-wrap">
+                    <button class="icon-btn" title="Notifications">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                            <path d="M13.73 21a2 2 0 01-3.46 0" />
+                        </svg>
+                        <span class="notif-badge">3</span>
+                    </button>
+                </div>
+                <div class="topbar-user">
+                    <div class="user-avatar">SA</div>
+                    <div class="user-info">
+                        <div class="user-name">Security Analyst</div>
+                        <div class="user-role">SOC Team</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- ═══════════ PAGE: DASHBOARD ═══════════ -->
+        <main class="page active" id="page-dashboard">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">SOAR Dashboard</h1>
+                    <p class="page-subtitle">Security Orchestration, Automation &amp; Response</p>
+                </div>
+                <div class="live-chip"><span class="live-dot"></span>Live Monitoring</div>
+            </div>
+
+            <div class="module-label">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 6 12 12 16 14" />
+                </svg>
+                Module 4 – SOC Dashboard
+            </div>
+
+            <!-- STAT CARDS -->
+            <div class="stat-grid">
+                <div class="stat-card">
+                    <div class="stat-icon stat-icon-blue">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                        </svg>
+                    </div>
+                    <div class="stat-body">
+                        <div class="stat-val">{{ data.global_stats.total_alerts }}</div>
+                        <div class="stat-lbl">Total Alerts</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon stat-icon-red">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path
+                                d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                            <line x1="12" y1="9" x2="12" y2="13" />
+                            <line x1="12" y1="17" x2="12.01" y2="17" />
+                        </svg>
+                    </div>
+                    <div class="stat-body">
+                        <div class="stat-val">{{ data.global_stats.total_incidents }}</div>
+                        <div class="stat-lbl">Critical Alerts</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon stat-icon-amber">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="12" cy="12" r="10" />
+                            <polyline points="12 6 12 12 16 14" />
+                        </svg>
+                    </div>
+                    <div class="stat-body">
+                        <div class="stat-val">{{ data.global_stats.playbooks_run }}</div>
+                        <div class="stat-lbl">Investigating</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon stat-icon-green">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
+                            <polyline points="22 4 12 14.01 9 11.01" />
+                        </svg>
+                    </div>
+                    <div class="stat-body">
+                        <div class="stat-val">{{ data.global_stats.total_contained }}</div>
+                        <div class="stat-lbl">Resolved</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHARTS ROW -->
+            <div class="charts-row">
+                <div class="chart-card">
+                    <div class="chart-title">Alert Severity Distribution</div>
+                    <div class="chart-wrap pie-wrap">
+                        <canvas id="severityChart"></canvas>
+                    </div>
+                    <div class="chart-legend" id="severityLegend"></div>
+                </div>
+                <div class="chart-card chart-card-wide">
+                    <div class="chart-title">Alerts Over Time (24h)</div>
+                    <div class="chart-wrap">
+                        <canvas id="timelineChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ALERT TIMELINE TABLE -->
+            <div class="section-card">
+                <div class="section-card-header">
+                    <span class="section-card-title">🕒 Alert Timeline Feed</span>
+                    <button class="btn-run-all" onclick="runAllPlaybacks()">▶ Run All Playbooks</button>
+                </div>
+                {% if data.timeline %}
+                <div class="timeline-list">
+                    {% for inc in data.timeline %}
+                    <div class="tl-row">
+                        <div class="tl-dot-col">
+                            <span
+                                class="tl-circle tl-{{ 'danger' if inc.severity in ['CRITICAL','HIGH'] else ('warning' if inc.severity == 'MEDIUM' else 'success') }}"></span>
+                        </div>
+                        <div class="tl-row-body">
+                            <span class="tl-id-lbl">{{ inc.id }}</span>
+                            <span class="tl-type-lbl">{{ inc.type }}</span>
+                            <span class="sev-pill sev-{{ inc.severity | lower }}">{{ inc.severity }}</span>
+                            <span class="tl-arrow">→</span>
+                            <span class="tl-status-lbl">{{ inc.status }}</span>
+                        </div>
+                        <div class="tl-meta-col"><code>{{ inc.ip }}</code>&nbsp;&nbsp;{{ inc.ts }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state">No incidents recorded yet. Run a playbook to generate data.</div>
+                {% endif %}
+            </div>
+        </main>
+
+        <!-- ═══════════ PAGE: ALERTS ═══════════ -->
+        <main class="page" id="page-alerts">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Alerts</h1>
+                    <p class="page-subtitle">All detected security alerts across playbooks</p>
+                </div>
+                <div class="filter-bar">
+                    <select class="filter-sel" onchange="filterBySeverity(this.value)" id="severityFilter">
+                        <option value="">All Severities</option>
+                        <option value="critical">Critical</option>
+                        <option value="high">High</option>
+                        <option value="medium">Medium</option>
+                        <option value="low">Low</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="alerts-list" id="alertsList">
+                {% for pb in data.playbooks %}
+                {% for alert in pb.alerts %}
+                <div class="alert-row severity-{{ (alert.severity if alert.severity else alert.get('verdict','LOW')) | lower }}"
+                    data-search="{{ alert | string | lower }}">
+                    <div class="alert-row-left">
+                        <span class="alert-type-icon">{{ pb.icon }}</span>
+                        <div>
+                            <div class="alert-row-title">
+                                {% if alert.ip %}{{ alert.ip }}{% elif alert.host %}{{ alert.host }}{% elif alert.user
+                                %}{{ alert.user }}{% elif alert.asset %}{{ alert.asset }}{% elif alert.email_id %}{{
+                                alert.email_id }}{% else %}Unknown{% endif %}
+                            </div>
+                            <div class="alert-row-sub">{{ pb.name }}</div>
+                        </div>
+                    </div>
+                    <div class="alert-row-right">
+                        <span
+                            class="sev-pill sev-{{ (alert.severity if alert.severity else alert.get('verdict','low')) | lower }}">{{
+                            alert.severity if alert.severity else alert.get('verdict','—') }}</span>
+                        <span class="alert-ts">{{ alert.timestamp }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+                {% endfor %}
+            </div>
+        </main>
+
+        <!-- ═══════════ PAGE: CASES ═══════════ -->
+        <main class="page" id="page-cases">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Cases</h1>
+                    <p class="page-subtitle">Active incident cases and investigations</p>
+                </div>
+            </div>
+            <div class="cases-grid">
+                {% for pb in data.playbooks %}
+                {% for alert in pb.alerts %}
+                {% if alert.severity in ['CRITICAL','HIGH'] or alert.get('verdict','') in ['MALICIOUS','SUSPENDED'] %}
+                <div
+                    class="case-card border-l-{{ 'danger' if alert.severity == 'CRITICAL' or alert.get('verdict') == 'MALICIOUS' else 'warning' }}">
+                    <div class="case-card-header">
+                        <span class="case-id">{{ alert.incident_id }}</span>
+                        <span class="sev-pill sev-{{ alert.severity | lower if alert.severity else 'high' }}">
+                            {{ alert.severity if alert.severity else 'HIGH' }}
+                        </span>
+                    </div>
+                    <div class="case-type">{{ pb.name }}</div>
+                    <div class="case-meta">
+                        <span>
+                            {% if alert.ip %}🌐 {{ alert.ip }}{% elif alert.host %}🖥 {{ alert.host }}{% elif alert.user
+                            %}👤 {{ alert.user }}{% elif alert.asset %}💾 {{ alert.asset }}{% endif %}
+                        </span>
+                        <span>🕒 {{ alert.timestamp }}</span>
+                    </div>
+                    <div class="case-actions">▶ {{ (alert.actions[0] if alert.actions else 'No action') | truncate(60)
+                        }}</div>
+                </div>
+                {% endif %}
+                {% endfor %}
+                {% endfor %}
+            </div>
+        </main>
+
+        <!-- ═══════════ PAGE: PLAYBOOKS ═══════════ -->
+        <main class="page" id="page-playbooks">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Playbooks</h1>
+                    <p class="page-subtitle">Automated response playbook execution flows</p>
+                </div>
+            </div>
+
+            <!-- Playbook selector tabs -->
+            <div class="pb-selector">
+                {% for pb in data.playbooks %}
+                <button class="pb-sel-btn {% if loop.index == 1 %}active{% endif %}"
+                    onclick="selectPlaybook({{ loop.index0 }}, this)" id="pbsel-{{ loop.index0 }}">
+                    <span>{{ pb.icon }}</span> {{ pb.name }}
+                </button>
+                {% endfor %}
+            </div>
+
+            <!-- Playbook detail panels -->
+            {% for pb in data.playbooks %}
+            <div class="pb-detail {% if loop.index == 1 %}active{% endif %}" id="pbdetail-{{ loop.index0 }}">
+
+                <!-- PB Header -->
+                <div class="pb-detail-header">
+                    <div class="pb-detail-title-block">
+                        <div class="pb-detail-icon">{{ pb.icon }}</div>
+                        <div>
+                            <h2 class="pb-detail-name">{{ pb.name }}</h2>
+                            <p class="pb-detail-desc">
+                                {% if loop.index == 1 %}Detects SSH brute-force attacks, enriches with threat
+                                intelligence, and automatically blocks malicious IPs at the firewall.
+                                {% elif loop.index == 2 %}Triages phishing emails, scans URLs and attachments in
+                                sandbox, quarantines malicious messages and blocks sender domains.
+                                {% elif loop.index == 3 %}Identifies malware on endpoints via EDR/AV, isolates infected
+                                hosts, blocks C2 communication, and triggers IR procedures.
+                                {% elif loop.index == 4 %}Enriches raw SIEM alerts with threat intelligence from
+                                AbuseIPDB, VirusTotal, Shodan, and ThreatFox to prioritize response.
+                                {% elif loop.index == 5 %}Detects insider threat anomalies via UEBA, identifies
+                                high-risk behavioral patterns and automatically escalates or suspends accounts.
+                                {% elif loop.index == 6 %}Scans assets for known CVEs, scores criticality, schedules
+                                emergency patches based on CVSS score, and triggers compliance workflows.
+                                {% endif %}
+                            </p>
+                            <div class="pb-detail-meta">
+                                {% set sample = pb.alerts[0] if pb.alerts else None %}
+                                <span>⏱ Estimated Time: 2-5 minutes</span>
+                                <span>📋 Steps: {{ pb.alerts | length }}</span>
+                                {% if sample %}<span>📄 {{ sample.playbook }}</span>{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn-run-playbook" onclick="runPlaybook({{ loop.index }}, this)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <polygon points="5 3 19 12 5 21 5 3" />
+                        </svg>
+                        Run Playbook
+                    </button>
+                </div>
+
+                <!-- Trigger Conditions -->
+                <div class="trigger-section">
+                    <div class="trigger-label">TRIGGER CONDITIONS</div>
+                    <div class="trigger-tags">
+                        {% if loop.index == 1 %}<span class="trigger-tag">SSH Brute-Force</span><span
+                            class="trigger-tag">Failed Authentication &gt; 5</span><span class="trigger-tag">Port 22
+                            Attack</span>
+                        {% elif loop.index == 2 %}<span class="trigger-tag">Phishing Email</span><span
+                            class="trigger-tag">Malicious URL</span><span class="trigger-tag">Suspicious
+                            Attachment</span>
+                        {% elif loop.index == 3 %}<span class="trigger-tag">Malware Detection</span><span
+                            class="trigger-tag">Suspicious File Activity</span><span class="trigger-tag">C2
+                            Callback</span>
+                        {% elif loop.index == 4 %}<span class="trigger-tag">SIEM Alert</span><span
+                            class="trigger-tag">Unknown IP</span><span class="trigger-tag">Threat Intel Lookup</span>
+                        {% elif loop.index == 5 %}<span class="trigger-tag">Insider Threat</span><span
+                            class="trigger-tag">UEBA Anomaly</span><span class="trigger-tag">Privileged Access
+                            Abuse</span>
+                        {% elif loop.index == 6 %}<span class="trigger-tag">CVE Detected</span><span
+                            class="trigger-tag">Patch SLA Breach</span><span class="trigger-tag">Critical Asset
+                            Exposed</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Execution Flow -->
+                {% set pb_idx = loop.index0 %}
+                <div class="exec-flow-section">
+                    <div class="exec-flow-label">EXECUTION FLOW</div>
+                    <div class="exec-flow" id="flow-{{ pb_idx }}">
+                        {% for alert in pb.alerts %}
+                        {% set step_idx = loop.index0 %}
+                        <div class="flow-step" id="step-{{ pb_idx }}-{{ step_idx }}">
+                            <div class="flow-step-connector">
+                                <div class="flow-node flow-node-pending" id="node-{{ pb_idx }}-{{ step_idx }}">
+                                    <svg class="node-clock" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10" />
+                                        <polyline points="12 6 12 12 16 14" />
+                                    </svg>
+                                    <svg class="node-check" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2" style="display:none">
+                                        <polyline points="20 6 9 17 4 12" />
+                                    </svg>
+                                </div>
+                                {% if not loop.last %}<div class="flow-connector"><span class="flow-arrow">→</span>
+                                </div>{% endif %}
+                            </div>
+                            <div class="flow-card" id="card-{{ pb_idx }}-{{ step_idx }}">
+                                <div class="flow-card-body">
+                                    <div class="flow-card-title">
+                                        {% if alert.ip %}🔍 Analyze Source IP: {{ alert.ip }}
+                                        {% elif alert.host %}🖥 Contain Host: {{ alert.host }}
+                                        {% elif alert.user %}👤 Assess User: {{ alert.user }}
+                                        {% elif alert.asset %}💾 Scan Asset: {{ alert.asset }}
+                                        {% elif alert.email_id %}📧 Triage Email: {{ alert.email_id }}
+                                        {% elif alert.id %}🔎 Enrich Alert: {{ alert.id }}
+                                        {% else %}⚙ Execute Step
+                                        {% endif %}
+                                    </div>
+                                    <div class="flow-card-desc">
+                                        {% if alert.description %}{{ alert.description | truncate(80) }}
+                                        {% elif alert.actions %}{{ alert.actions[0] | truncate(80) }}
+                                        {% endif %}
+                                    </div>
+                                    {% if alert.actions and alert.actions | length > 1 %}
+                                    <div class="flow-card-actions" id="actions-{{ pb_idx }}-{{ step_idx }}"
+                                        style="display:none">
+                                        <div class="flow-actions-title">Actions Taken:</div>
+                                        <ul class="flow-action-list">
+                                            {% for a in alert.actions %}
+                                            <li><span class="tick-green">✓</span> <code>{{ a }}</code></li>
+                                            {% endfor %}
+                                        </ul>
+                                        {% if alert.severity %}<div class="flow-card-meta">
+                                            <span class="sev-pill sev-{{ alert.severity | lower }}">{{ alert.severity
+                                                }}</span>
+                                            {% if alert.score %}<span class="score-mini">Score: {{ alert.score
+                                                }}/100</span>{% endif %}
+                                            {% if alert.reputation %}<span
+                                                class="rep-mini rep-{{ alert.reputation | lower }}">{{ alert.reputation
+                                                }}</span>{% endif %}
+                                        </div>{% endif %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="flow-card-status">
+                                    <span class="status-badge badge-pending"
+                                        id="badge-{{ pb_idx }}-{{ step_idx }}">Pending</span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+            </div><!-- end pb-detail -->
+            {% endfor %}
+        </main>
+
+        <!-- ═══════════ PAGE: SETTINGS ═══════════ -->
+        <main class="page" id="page-settings">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Settings</h1>
+                    <p class="page-subtitle">System configuration and integration settings</p>
+                </div>
+            </div>
+            <div class="settings-grid">
+                <div class="settings-card">
+                    <div class="settings-card-title">🔗 System B Integration</div>
+                    <div class="settings-row"><span class="settings-lbl">System A (SOAR) IP</span><code
+                            class="settings-val">0.0.0.0:5000</code></div>
+                    <div class="settings-row"><span class="settings-lbl">Log Ingest Endpoint</span><code
+                            class="settings-val">/api/ingest_logs</code></div>
+                    <div class="settings-row"><span class="settings-lbl">Auth Log Path</span><code
+                            class="settings-val">./auth.log</code></div>
+                    <div class="settings-row"><span class="settings-lbl">Brute-Force Threshold</span><code
+                            class="settings-val">5 failed attempts</code></div>
+                </div>
+                <div class="settings-card">
+                    <div class="settings-card-title">🧠 Threat Intelligence</div>
+                    <div class="settings-row"><span class="settings-lbl">AbuseIPDB</span><span
+                            class="badge-ok">Connected</span></div>
+                    <div class="settings-row"><span class="settings-lbl">VirusTotal</span><span
+                            class="badge-ok">Connected</span></div>
+                    <div class="settings-row"><span class="settings-lbl">Shodan</span><span
+                            class="badge-ok">Connected</span></div>
+                    <div class="settings-row"><span class="settings-lbl">ThreatFox</span><span
+                            class="badge-ok">Connected</span></div>
+                </div>
+                <div class="settings-card">
+                    <div class="settings-card-title">📋 Playbook Configuration</div>
+                    <div class="settings-row"><span class="settings-lbl">SSH Brute-Force</span><span
+                            class="badge-ok">Active</span></div>
+                    <div class="settings-row"><span class="settings-lbl">Phishing Triage</span><span
+                            class="badge-ok">Active</span></div>
+                    <div class="settings-row"><span class="settings-lbl">Malware Containment</span><span
+                            class="badge-ok">Active</span></div>
+                    <div class="settings-row"><span class="settings-lbl">Alert Enrichment</span><span
+                            class="badge-ok">Active</span></div>
+                    <div class="settings-row"><span class="settings-lbl">Insider Threat</span><span
+                            class="badge-ok">Active</span></div>
+                    <div class="settings-row"><span class="settings-lbl">Vuln Management</span><span
+                            class="badge-ok">Active</span></div>
+                </div>
+                <div class="settings-card">
+                    <div class="settings-card-title">🛠 System Info</div>
+                    <div class="settings-row"><span class="settings-lbl">Backend</span><code
+                            class="settings-val">Python + Flask</code></div>
+                    <div class="settings-row"><span class="settings-lbl">Database</span><code
+                            class="settings-val">SQLite (soar.db)</code></div>
+                    <div class="settings-row"><span class="settings-lbl">Version</span><code
+                            class="settings-val">SOAR v3.0</code></div>
+                    <div class="settings-row"><span class="settings-lbl">Scan Time</span><code
+                            class="settings-val">{{ data.global_stats.scan_time }}</code></div>
+                </div>
+            </div>
+        </main>
+
+    </div><!-- end content-area -->
+
+    <!-- ─────── SCRIPTS ─────── -->
+    <script>
+        /* ── Embedded data from Flask ── */
+        const PLAYBOOK_DATA = {{ data | tojson }};
+
+        /* ── Clock ── */
+        (function () {
+            function tick() {
+                const n = new Date();
+                const el = document.getElementById('clock');
+                if (el) el.textContent = n.toLocaleTimeString('en-GB');
+            }
+            tick(); setInterval(tick, 1000);
+        })();
+
+        /* ── Page navigation ── */
+        function showPage(name, btn) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+            const page = document.getElementById('page-' + name);
+            if (page) page.classList.add('active');
+            if (btn) btn.classList.add('active');
+        }
+
+        /* ── Playbook selector ── */
+        function selectPlaybook(idx, btn) {
+            document.querySelectorAll('.pb-sel-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.pb-detail').forEach(d => d.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            const detail = document.getElementById('pbdetail-' + idx);
+            if (detail) detail.classList.add('active');
+        }
+
+        /* ── Run Playbook animation ── */
+        function runPlaybook(pbIdx, btn) {
+            const idx = pbIdx - 1;
+            const pb = PLAYBOOK_DATA.playbooks[idx];
+            if (!pb) return;
+
+            btn.disabled = true;
+            btn.innerHTML = '⏳ Running...';
+            btn.classList.add('running');
+
+            const steps = pb.alerts.length;
+            let step = 0;
+
+            function doStep() {
+                if (step >= steps) {
+                    btn.disabled = false;
+                    btn.innerHTML = '✓ Completed';
+                    btn.classList.remove('running');
+                    btn.classList.add('done');
+                    setTimeout(() => {
+                        btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg> Run Playbook';
+                        btn.classList.remove('done');
+                    }, 4000);
+                    return;
+                }
+
+                const node = document.getElementById('node-' + idx + '-' + step);
+                const badge = document.getElementById('badge-' + idx + '-' + step);
+                const card = document.getElementById('card-' + idx + '-' + step);
+                const actions = document.getElementById('actions-' + idx + '-' + step);
+
+                if (node) {
+                    node.classList.remove('flow-node-pending');
+                    node.classList.add('flow-node-running');
+                }
+                if (badge) { badge.textContent = 'Running...'; badge.className = 'status-badge badge-running'; }
+
+                setTimeout(() => {
+                    if (node) {
+                        node.classList.remove('flow-node-running');
+                        node.classList.add('flow-node-done');
+                        const clk = node.querySelector('.node-clock');
+                        const chk = node.querySelector('.node-check');
+                        if (clk) clk.style.display = 'none';
+                        if (chk) chk.style.display = 'block';
+                    }
+                    if (badge) { badge.textContent = 'Completed'; badge.className = 'status-badge badge-done'; }
+                    if (card) card.classList.add('flow-card-done');
+                    if (actions) actions.style.display = 'block';
+                    step++;
+                    setTimeout(doStep, 400);
+                }, 900 + Math.random() * 400);
+            }
+
+            /* Reset first */
+            for (let s = 0; s < steps; s++) {
+                const node = document.getElementById('node-' + idx + '-' + s);
+                const badge = document.getElementById('badge-' + idx + '-' + s);
+                const card = document.getElementById('card-' + idx + '-' + s);
+                const actions = document.getElementById('actions-' + idx + '-' + s);
+                if (node) { node.className = 'flow-node flow-node-pending'; const clk = node.querySelector('.node-clock'); const chk = node.querySelector('.node-check'); if (clk) clk.style.display = 'block'; if (chk) chk.style.display = 'none'; }
+                if (badge) { badge.textContent = 'Pending'; badge.className = 'status-badge badge-pending'; }
+                if (card) card.classList.remove('flow-card-done');
+                if (actions) actions.style.display = 'none';
+            }
+
+            doStep();
+        }
+
+        /* ── Run All Playbooks ── */
+        function runAllPlaybacks() {
+            const btn = event.target;
+            btn.textContent = '⏳ Running all playbooks...';
+            btn.disabled = true;
+            let i = 0;
+            function next() {
+                if (i >= PLAYBOOK_DATA.playbooks.length) {
+                    btn.textContent = '✓ All Playbooks Completed';
+                    setTimeout(() => { btn.textContent = '▶ Run All Playbooks'; btn.disabled = false; }, 3000);
+                    return;
+                }
+                const pbBtn = document.createElement('div');
+                runPlaybook(i + 1, { disabled: false, innerHTML: '', classList: { add: () => { }, remove: () => { } }, classList_add: () => { } });
+                i++;
+                setTimeout(next, 1200 * (PLAYBOOK_DATA.playbooks[i - 1].alerts.length + 1));
+            }
+            next();
+        }
+
+        /* ── Alert filter ── */
+        function filterAlerts(q) {
+            q = q.toLowerCase();
+            document.querySelectorAll('.alert-row').forEach(row => {
+                const txt = (row.dataset.search || '') + row.textContent.toLowerCase();
+                row.style.display = txt.includes(q) ? '' : 'none';
+            });
+        }
+
+        function filterBySeverity(sev) {
+            document.querySelectorAll('.alert-row').forEach(row => {
+                if (!sev) { row.style.display = ''; return; }
+                row.style.display = row.classList.contains('severity-' + sev) ? '' : 'none';
+            });
+        }
+
+        /* ── Charts ── */
+        window.addEventListener('DOMContentLoaded', () => {
+            buildSeverityChart();
+            buildTimelineChart();
+        });
+
+        function buildSeverityChart() {
+            const pb = PLAYBOOK_DATA.playbooks;
+            let crit = 0, high = 0, med = 0, low = 0;
+            pb.forEach(p => {
+                p.alerts.forEach(a => {
+                    const sev = (a.severity || 'low').toLowerCase();
+                    if (sev === 'critical') crit++;
+                    else if (sev === 'high') high++;
+                    else if (sev === 'medium') med++;
+                    else low++;
+                });
+            });
+
+            const ctx = document.getElementById('severityChart');
+            if (!ctx) return;
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Critical', 'High', 'Medium', 'Low'],
+                    datasets: [{
+                        data: [crit, high, med, low],
+                        backgroundColor: ['#ef4444', '#f97316', '#f59e0b', '#10b981'],
+                        borderColor: '#111827',
+                        borderWidth: 3,
+                        hoverOffset: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: ctx => `${ctx.label}: ${ctx.raw}`
+                            }
+                        }
+                    }
+                }
+            });
+
+            const legend = document.getElementById('severityLegend');
+            if (legend) {
+                const colors = ['#ef4444', '#f97316', '#f59e0b', '#10b981'];
+                const labels = [['Critical', crit], ['High', high], ['Medium', med], ['Low', low]];
+                legend.innerHTML = labels.map((l, i) => `<span class="legend-item"><span class="legend-dot" style="background:${colors[i]}"></span>${l[0]}: ${l[1]}</span>`).join('');
+            }
+        }
+
+        function buildTimelineChart() {
+            const ctx = document.getElementById('timelineChart');
+            if (!ctx) return;
+
+            /* Simulated 24h data */
+            const hours = [];
+            for (let h = 0; h < 24; h++) hours.push(`${String(h).padStart(2, '0')}:00`);
+
+            /* Generate plausible alert counts */
+            function wave(peak, offset) {
+                return hours.map((_, i) => Math.max(0, Math.round(peak * Math.exp(-0.5 * Math.pow((i - offset) / 3, 2)) + Math.random() * 1.5)));
+            }
+            const totalWave = wave(11, 10).map((v, i) => v + wave(8, 16)[i]);
+            const critWave = wave(4, 10).map((v, i) => Math.round(v * 0.4));
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: hours,
+                    datasets: [
+                        {
+                            label: 'Total Alerts',
+                            data: totalWave,
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59,130,246,0.12)',
+                            fill: true,
+                            tension: 0.45,
+                            pointRadius: 0,
+                            borderWidth: 2.5
+                        },
+                        {
+                            label: 'Critical',
+                            data: critWave,
+                            borderColor: '#ef4444',
+                            backgroundColor: 'rgba(239,68,68,0.08)',
+                            fill: true,
+                            tension: 0.45,
+                            pointRadius: 0,
+                            borderWidth: 2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: { color: '#94a3b8', font: { family: 'Inter', size: 11 }, boxWidth: 12, padding: 16 }
+                        },
+                        tooltip: {
+                            backgroundColor: '#0f172a',
+                            borderColor: 'rgba(59,130,246,0.3)',
+                            borderWidth: 1,
+                            titleColor: '#e2e8f0',
+                            bodyColor: '#94a3b8'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: '#4b5563', font: { family: 'Inter', size: 10 }, maxTicksLimit: 12 },
+                            grid: { color: 'rgba(255,255,255,0.04)' }
+                        },
+                        y: {
+                            ticks: { color: '#4b5563', font: { family: 'Inter', size: 10 } },
+                            grid: { color: 'rgba(255,255,255,0.04)' },
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+
+    <!-- ═══════════════════════════════════════════
+         ORCHESEC AI AGENT – Floating Button
+    ═══════════════════════════════════════════ -->
+    <div id="orchesec-fab" onclick="orchesecToggle()" title="OrcheSec AI Agent">
+        <img src="{{ url_for('static', filename='images/orchesec_icon.png') }}" alt="OrcheSec AI Agent" />
+        <span id="orchesec-fab-badge">!</span>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         ORCHESEC AI AGENT – Chat Panel
+    ═══════════════════════════════════════════ -->
+    <div id="orchesec-panel">
+        <!-- Header -->
+        <div class="orchesec-header">
+            <img src="{{ url_for('static', filename='images/orchesec_icon.png') }}" class="orchesec-header-icon"
+                alt="OrcheSec" />
+            <div class="orchesec-header-text">
+                <div class="orchesec-header-name">OrcheSec AI Agent</div>
+                <div class="orchesec-header-status">
+                    <span class="orchesec-status-dot"></span>
+                    Online &middot; SOC Intelligence Assistant
+                </div>
+            </div>
+            <button class="orchesec-close-btn" onclick="orchesecToggle()" title="Close">&#x2715;</button>
+        </div>
+
+        <!-- Incident summary chip -->
+        <div class="orchesec-incident-chip" id="orchesec-chip">
+            &#x1F6A8; <strong>Active Alert Detected</strong> &mdash; SSH Brute-Force on
+            <strong>192.168.1.105</strong> | Failed Attempts: <strong>20</strong> | Risk: <strong>CRITICAL</strong>
+        </div>
+
+        <!-- Messages -->
+        <div class="orchesec-messages" id="orchesec-messages"></div>
+
+        <!-- Quick action chips -->
+        <div class="orchesec-quick-actions">
+            <button class="quick-chip" onclick="orchesecQuick('Show latest security alerts')">&#x1F50D; Latest
+                Alerts</button>
+            <button class="quick-chip" onclick="orchesecQuick('Check IP 192.168.1.105')">&#x1F9E0; Check IP</button>
+            <button class="quick-chip" onclick="orchesecQuick('Prioritize alerts by risk')">&#x1F3AF;
+                Prioritize</button>
+            <button class="quick-chip" onclick="orchesecQuick('Incident summary')">&#x1F4DD; Summary</button>
+            <button class="quick-chip" onclick="orchesecQuick('Block 192.168.1.105')">&#x1F512; Block IP</button>
+            <button class="quick-chip" onclick="orchesecQuick('What should I do about this attack?')">&#x1F4A1;
+                Recommend</button>
+        </div>
+
+        <!-- Input -->
+        <div class="orchesec-input-row">
+            <input type="text" id="orchesec-input" placeholder="Ask OrcheSec AI Agent..."
+                onkeydown="if(event.key==='Enter') orchesecSend()" />
+            <button id="orchesec-send-btn" onclick="orchesecSend()" title="Send">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="22" y1="2" x2="11" y2="13" />
+                    <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- OrcheSec AI Agent JavaScript -->
+    <script>
+        (function () {
+            var orchesecOpen = false;
+            var orchesecGreeted = false;
+            var panel = document.getElementById('orchesec-panel');
+            var messages = document.getElementById('orchesec-messages');
+            var inputEl = document.getElementById('orchesec-input');
+            var sendBtn = document.getElementById('orchesec-send-btn');
+            var badge = document.getElementById('orchesec-fab-badge');
+            var iconSrc = "{{ url_for('static', filename='images/orchesec_icon.png') }}";
+
+            window.orchesecToggle = function () {
+                orchesecOpen = !orchesecOpen;
+                panel.classList.toggle('open', orchesecOpen);
+                if (orchesecOpen) {
+                    if (badge) badge.style.display = 'none';
+                    if (!orchesecGreeted) {
+                        orchesecGreeted = true;
+                        setTimeout(function () {
+                            addMsg('agent',
+                                '👋 Hi! I\'m **OrcheSec AI Agent** — your intelligent SOC assistant.\n\n' +
+                                'I\'m actively monitoring your SOAR platform. I can:\n' +
+                                '• 🔍 Analyze and summarize security alerts\n' +
+                                '• 🧠 Look up IP threat intelligence\n' +
+                                '• ⚡ Execute response actions (block IP, isolate host)\n' +
+                                '• 📋 Search authentication logs\n' +
+                                '• 🎯 Prioritize alerts by severity\n\n' +
+                                'Use the quick buttons below or just type your question!');
+                        }, 280);
+                    }
+                    setTimeout(function () { inputEl.focus(); }, 360);
+                }
+            };
+
+            window.orchesecQuick = function (q) {
+                inputEl.value = q;
+                orchesecSend();
+            };
+
+            window.orchesecSend = function () {
+                var q = inputEl.value.trim();
+                if (!q) return;
+                addMsg('user', q);
+                inputEl.value = '';
+                sendBtn.disabled = true;
+                var typingEl = showTyping();
+
+                fetch('/api/ai_agent', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: q })
+                })
+                    .then(function (r) { return r.json(); })
+                    .then(function (data) {
+                        typingEl.remove();
+                        if (data.error) {
+                            addMsg('agent', '❌ Error: ' + data.error);
+                        } else {
+                            addMsg('agent', data.response || '—');
+                        }
+                    })
+                    .catch(function () {
+                        typingEl.remove();
+                        addMsg('agent',
+                            '⚠️ Could not reach the OrcheSec backend.\nMake sure the Flask server is running on port 5000.');
+                    })
+                    .finally(function () {
+                        sendBtn.disabled = false;
+                        inputEl.focus();
+                    });
+            };
+
+            function addMsg(role, text) {
+                var wrap = document.createElement('div');
+                wrap.className = 'orchesec-msg ' + role;
+
+                var avatarDiv = document.createElement('div');
+                avatarDiv.className = 'orchesec-msg-avatar';
+                if (role === 'agent') {
+                    var img = document.createElement('img');
+                    img.src = iconSrc;
+                    img.alt = 'OrcheSec';
+                    avatarDiv.appendChild(img);
+                } else {
+                    avatarDiv.textContent = 'SA';
+                }
+
+                var bubble = document.createElement('div');
+                bubble.className = 'orchesec-bubble';
+                bubble.innerHTML = formatMsg(text);
+
+                wrap.appendChild(avatarDiv);
+                wrap.appendChild(bubble);
+                messages.appendChild(wrap);
+                messages.scrollTop = messages.scrollHeight;
+            }
+
+            function showTyping() {
+                var el = document.createElement('div');
+                el.className = 'orchesec-typing';
+                el.innerHTML = '<span></span><span></span><span></span>';
+                messages.appendChild(el);
+                messages.scrollTop = messages.scrollHeight;
+                return el;
+            }
+
+            function formatMsg(text) {
+                var t = text
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;');
+                /* Code blocks */
+                t = t.replace(/```([\s\S]*?)```/g,
+                    '<pre style="background:rgba(59,130,246,0.07);border:1px solid rgba(59,130,246,0.18);' +
+                    'border-radius:7px;padding:8px 10px;overflow-x:auto;font-family:\'JetBrains Mono\',monospace;' +
+                    'font-size:.71rem;color:#7dd3fc;margin:6px 0;white-space:pre;">$1</pre>');
+                /* Inline code */
+                t = t.replace(/`([^`\n]+)`/g, '<code>$1</code>');
+                /* Bold */
+                t = t.replace(/\*\*([^*\n]+)\*\*/g,
+                    '<strong style="color:#e2e8f0;font-weight:700;">$1</strong>');
+                /* Italic */
+                t = t.replace(/_([^_\n]+)_/g,
+                    '<em style="color:#94a3b8;">$1</em>');
+                /* Divider */
+                t = t.replace(/━+/g,
+                    '<hr style="border:none;border-top:1px solid rgba(59,130,246,0.15);margin:6px 0;">');
+                /* Newlines */
+                t = t.replace(/\n/g, '<br>');
+                return t;
+            }
+        })();
+    </script>
+
+</body>
+
+</html>
