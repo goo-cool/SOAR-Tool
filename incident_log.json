@@ -1,0 +1,42 @@
+[
+  {
+    "incident_id": "INC-71079",
+    "timestamp": "2026-03-04 21:56:09",
+    "attacker_ip": "192.168.1.105",
+    "severity": "CRITICAL",
+    "reputation": "Malicious",
+    "failed_attempts": 17,
+    "action": "BLOCKED",
+    "playbook": "SSH_BruteForce_Response_v1.0"
+  },
+  {
+    "incident_id": "INC-71434",
+    "timestamp": "2026-03-04 21:56:09",
+    "attacker_ip": "203.0.113.50",
+    "severity": "CRITICAL",
+    "reputation": "Malicious",
+    "failed_attempts": 16,
+    "action": "BLOCKED",
+    "playbook": "SSH_BruteForce_Response_v1.0"
+  },
+  {
+    "incident_id": "INC-49284",
+    "timestamp": "2026-03-04 21:56:09",
+    "attacker_ip": "10.0.0.47",
+    "severity": "MEDIUM",
+    "reputation": "Suspicious",
+    "failed_attempts": 8,
+    "action": "RATE-LIMITED",
+    "playbook": "SSH_BruteForce_Response_v1.0"
+  },
+  {
+    "incident_id": "INC-57641",
+    "timestamp": "2026-03-04 21:56:09",
+    "attacker_ip": "172.16.0.88",
+    "severity": "MEDIUM",
+    "reputation": "Suspicious",
+    "failed_attempts": 6,
+    "action": "RATE-LIMITED",
+    "playbook": "SSH_BruteForce_Response_v1.0"
+  }
+]

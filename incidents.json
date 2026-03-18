@@ -1,0 +1,106 @@
+[
+  {
+    "id": "SSH-13693",
+    "type": "SSH Brute-Force",
+    "ip": "192.168.1.105",
+    "severity": "CRITICAL",
+    "status": "BLOCKED",
+    "ts": "2026-03-18 06:58:26"
+  },
+  {
+    "id": "SSH-14091",
+    "type": "SSH Brute-Force",
+    "ip": "203.0.113.50",
+    "severity": "CRITICAL",
+    "status": "BLOCKED",
+    "ts": "2026-03-18 06:58:26"
+  },
+  {
+    "id": "SSH-58551",
+    "type": "SSH Brute-Force",
+    "ip": "10.0.0.47",
+    "severity": "MEDIUM",
+    "status": "RATE-LIMITED",
+    "ts": "2026-03-18 06:58:26"
+  },
+  {
+    "id": "SSH-85682",
+    "type": "SSH Brute-Force",
+    "ip": "172.16.0.88",
+    "severity": "MEDIUM",
+    "status": "RATE-LIMITED",
+    "ts": "2026-03-18 06:58:26"
+  },
+  {
+    "id": "PHI-30361",
+    "type": "Phishing Email",
+    "ip": "185.220.101.5",
+    "severity": "CRITICAL",
+    "status": "MALICIOUS",
+    "ts": "2026-03-18 06:58:26"
+  },
+  {
+    "id": "PHI-11002",
+    "type": "Phishing Email",
+    "ip": "198.51.100.77",
+    "severity": "MEDIUM",
+    "status": "SUSPICIOUS",
+    "ts": "2026-03-18 06:58:26"
+  },
+  {
+    "id": "PHI-68754",
+    "type": "Phishing Email",
+    "ip": "54.36.149.105",
+    "severity": "MEDIUM",
+    "status": "SUSPICIOUS",
+    "ts": "2026-03-18 06:58:26"
+  },
+  {
+    "id": "MAL-50228",
+    "type": "Malware (Emotet)",
+    "ip": "10.10.1.42",
+    "severity": "HIGH",
+    "status": "CONTAINED",
+    "ts": "2026-03-18 06:58:26"
+  },
+  {
+    "id": "MAL-98921",
+    "type": "Malware (LockBit)",
+    "ip": "10.10.2.15",
+    "severity": "CRITICAL",
+    "status": "ISOLATED",
+    "ts": "2026-03-18 06:58:26"
+  },
+  {
+    "id": "MAL-29295",
+    "type": "Malware (Generic Adware)",
+    "ip": "10.10.3.7",
+    "severity": "LOW",
+    "status": "REMEDIATED",
+    "ts": "2026-03-18 06:58:26"
+  },
+  {
+    "id": "INS-62122",
+    "type": "Insider Threat",
+    "ip": "user:mike.reynolds",
+    "severity": "CRITICAL",
+    "status": "SUSPENDED",
+    "ts": "2026-03-18 06:58:26"
+  },
+  {
+    "id": "INS-17525",
+    "type": "Insider Threat",
+    "ip": "user:emma.torres",
+    "severity": "HIGH",
+    "status": "SUSPENDED",
+    "ts": "2026-03-18 06:58:26"
+  },
+  {
+    "id": "INS-55116",
+    "type": "Insider Threat",
+    "ip": "user:raj.patel",
+    "severity": "MEDIUM",
+    "status": "UNDER REVIEW",
+    "ts": "2026-03-18 06:58:26"
+  }
+]

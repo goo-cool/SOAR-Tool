@@ -1,60 +1,50 @@
-# 🔐 SOAR Platform – Security Orchestration, Automation, and Response
+# OrcheSec SOAR Dashboard & AI Agent
 
-## 📌 Overview
-This project focuses on developing a **Security Orchestration, Automation, and Response (SOAR) Platform** aimed at automating and enhancing Security Operations Center (SOC) workflows.
+## Overview
+OrcheSec is an Automated Security Operations (SOAR) tool enhanced with real-world playbooks. It features a modern dashboard for visualizing security alerts, executing playbooks, and an integrated AI Agent for natural language interaction.
 
-The platform streamlines **incident detection, alert enrichment, correlation, and automated response**, helping analysts respond faster and more efficiently.
+## Features
+- **Dashboard Interface**: Visualizes metrics such as Playbooks Executed, Active Alerts, and Mean Time to Respond (MTTR).
+- **Automated Playbooks**:
+  1. SSH Brute-Force Response
+  2. Phishing Email Triage
+  3. Malware Containment
+  4. Alert Enrichment / Threat Intel
+  5. Insider Threat Detection
+  6. Vulnerability Management
+- **OrcheSec AI Agent**: Chat interface that interacts with the SOAR tool to query threat intelligence, analyze alerts, and run playbooks.
 
----
+## Project Structure
+- `app.py`: Main Flask application containing the playbooks, API endpoints, and AI agent logic.
+- `templates/index.html`: The HTML template for the SOAR dashboard.
+- `static/style.css`: Contains CSS styling for the dashboard.
 
-## 🎯 Objectives
-- Automate repetitive SOC tasks  
-- Reduce incident response time  
-- Minimize analyst fatigue  
-- Improve alert accuracy through enrichment & correlation  
+## Installation & Setup
 
----
+1. **Clone the repository**:
+   ```bash
+   git clone <your-repo-url>
+   cd <your-repo-directory>
+   ```
 
-## 🚀 Key Features
-✅ Threat Intelligence Integration  
-✅ Real-time Alert Enrichment  
-✅ Alert Correlation Engine  
-✅ Automated Response Playbooks  
-✅ SOC Workflow Automation  
-✅ Tool Integration (SIEM, Firewalls, Ticketing Systems)  
-✅ Modern UI built with **Lovable**
+2. **Set up a virtual environment** (Optional but recommended):
+   ```bash
+   python -m venv venv
+   # On Windows:
+   venv\Scripts\activate
+   # On macOS/Linux:
+   source venv/bin/activate
+   ```
 
----
+3. **Install dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-## 🛠️ Tech Stack
-- **Frontend/UI:** Lovable  
-- **Backend:** (Add your tech here – Python / Node.js / etc.)  
-- **APIs:** Threat Intelligence APIs  
-- **Version Control:** GitHub  
+4. **Run the application**:
+   ```bash
+   python app.py
+   ```
 
----
-
-## 🔄 Workflow
-1. Alerts ingested from SIEM / monitoring tools  
-2. Alerts enriched using threat intelligence  
-3. Correlation engine filters & groups alerts  
-4. Automated playbooks triggered  
-5. Response actions executed  
-
----
-
-## 📊 Impact
-- Faster incident investigation  
-- Reduced false positives  
-- Lower analyst workload  
-
-## 📚 Learning Outcomes
-- Security automation concepts  
-- API integrations  
-- SOC workflow design  
-- UI/UX development  
-- Version control & collaboration  
-
-## 👨‍💻 Author
-**Gokul **
-
+5. **Access the Dashboard**:
+   Open a web browser and navigate to `http://127.0.0.1:5000`.
